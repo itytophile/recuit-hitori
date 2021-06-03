@@ -99,28 +99,29 @@ impl<const SIZE: usize> MarksCoord for Marks<SIZE> {
 
         while !unvisited.is_empty() {
             component_count += 1;
-            visit_stack.push(unvisited.iter().next().copied().unwrap());
+            let first = unvisited.iter().next().copied().unwrap();
+            visit_stack.push(first);
+            unvisited.remove(&first);
 
             while !visit_stack.is_empty() {
                 let (line, col) = visit_stack.pop().unwrap();
-                unvisited.remove(&(line, col));
 
                 // On peut regarder les coordonnées
                 // sans faire attention aux limites car on ne regarde plus dans
                 // un tableau et on a mis les coordonnées en entiers naturels.
-                if unvisited.contains(&(line, col - 1)) {
+                if unvisited.remove(&(line, col - 1)) {
                     visit_stack.push((line, col - 1))
                 }
 
-                if unvisited.contains(&(line, col + 1)) {
+                if unvisited.remove(&(line, col + 1)) {
                     visit_stack.push((line, col + 1))
                 }
 
-                if unvisited.contains(&(line - 1, col)) {
+                if unvisited.remove(&(line - 1, col)) {
                     visit_stack.push((line - 1, col))
                 }
 
-                if unvisited.contains(&(line + 1, col)) {
+                if unvisited.remove(&(line + 1, col)) {
                     visit_stack.push((line + 1, col))
                 }
             }
